@@ -6,6 +6,37 @@ let cidadesChart, slaChart;
 let cityChoice, stationChoice, stationNameChoice;
 
 // ============================
+// 🔥 LOADING
+function showLoading() {
+  document.getElementById("loading").classList.remove("hidden");
+}
+
+function hideLoading() {
+  document.getElementById("loading").classList.add("hidden");
+}
+
+// ============================
+// 🔥 ANIMAÇÃO NÚMEROS
+function animateValue(id, start, end, duration = 600) {
+  let obj = document.getElementById(id);
+  let startTime = null;
+
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    let progress = Math.min((timestamp - startTime) / duration, 1);
+
+    let value = Math.floor(progress * (end - start) + start);
+    obj.innerText = value;
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+// ============================
 function normalize(val) {
   return String(val || "").toLowerCase().trim();
 }
@@ -45,6 +76,8 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (!file) return;
 
+  showLoading();
+
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
@@ -58,6 +91,8 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
 
       initChoices();
       updateDashboard();
+
+      hideLoading();
     }
   });
 });
@@ -149,10 +184,12 @@ function updateCards() {
   const dentroPercent = total ? ((dentro / total) * 100).toFixed(1) : "0";
   const foraPercent = total ? ((fora / total) * 100).toFixed(1) : "0";
 
-  document.getElementById("totalPedidos").innerText = total;
+  // 🔥 ANIMAÇÃO
+  animateValue("totalPedidos", 0, total);
+  animateValue("hold", 0, holdQtd);
+
   document.getElementById("slaDentro").innerText = dentroPercent + "%";
   document.getElementById("slaFora").innerText = foraPercent + "%";
-  document.getElementById("hold").innerText = holdQtd;
 }
 
 // ============================
@@ -238,12 +275,10 @@ function getChartOptions(labelName) {
 
         callbacks: {
 
-          // 🔥 TÍTULO
           title: function(context) {
             return `${labelName}: ${context[0].label}`;
           },
 
-          // 🔥 CONTEÚDO COMPLETO
           label: function(context) {
 
             const value = context.raw;
@@ -254,7 +289,6 @@ function getChartOptions(labelName) {
 
             let extra = "";
 
-            // 🔥 INFO EXTRA PARA SLA
             if (labelName === "SLA") {
               const label = context.label.toLowerCase();
 

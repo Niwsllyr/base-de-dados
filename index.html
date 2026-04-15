@@ -21,13 +21,32 @@
 
 <body>
 
+<!-- LOADING -->
+<div id="loading" class="loading hidden">
+  Carregando dados...
+</div>
+
 <header class="header">
-  <div class="container">
-    <h1>📦 Dashboard Logístico</h1>
+  <div class="container header-content">
+
+    <div class="logo-area">
+      <img src="logo.png" alt="Logo">
+      <div>
+        <div class="title-area">
+  <img src="logo1.png" alt="Shopee Logo">
+  <h1>Dashboard Logístico</h1>
+        <span>Operações Shopee</span>
+      </div>
+    </div>
+
+    <div class="user-area">
+      📊 Analytics
+    </div>
+
   </div>
 </header>
 
-<!-- 🔥 FILTROS PROFISSIONAIS -->
+<!-- FILTROS -->
 <div class="filters">
 
   <div class="filter-group">
@@ -52,7 +71,7 @@
   <div class="filter-group">
     <label>Station Name</label>
     <select id="stationNameFilter">
-      <option value="">Todos os Station Names</option>
+      <option value="">Todos</option>
     </select>
   </div>
 
@@ -93,7 +112,6 @@
   </section>
 
   <section class="charts">
-
     <div class="chart-box">
       <canvas id="cidadesChart"></canvas>
     </div>
@@ -101,7 +119,6 @@
     <div class="chart-box">
       <canvas id="slaChart"></canvas>
     </div>
-
   </section>
 
 </div>
