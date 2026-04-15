@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Logístico</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- PapaParse -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+
+<body>
+
+<header>
+  <h1>📦 Dashboard Logístico</h1>
+
+  <div class="filters">
+    <input type="file" id="fileInput" accept=".csv">
+
+    <input type="date" id="startDate">
+    <input type="date" id="endDate">
+
+    <select id="cityFilter">
+      <option value="">Todas cidades</option>
+    </select>
+
+    <select id="stationFilter">
+      <option value="">Todas estações</option>
+    </select>
+
+    <button onclick="applyFilters()">Filtrar</button>
+    <button onclick="clearFilters()">Limpar</button>
+  </div>
+</header>
+
+<section class="cards">
+  <div class="card">
+    <h3>Total Pedidos</h3>
+    <p id="totalPedidos">0</p>
+  </div>
+
+  <div class="card">
+    <h3>Dentro do SLA</h3>
+    <p id="sla">0%</p>
+  </div>
+
+  <div class="card">
+    <h3>Valor</h3>
+    <p id="hold">0</p>
+  </div>
+</section>
+
+<section class="charts">
+  <canvas id="pedidosChart"></canvas>
+  <canvas id="cidadesChart"></canvas>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
