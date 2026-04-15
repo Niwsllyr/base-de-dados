@@ -11,58 +11,100 @@
 
   <!-- PapaParse -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- Choices -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 </head>
 
 <body>
 
-<header>
-  <h1>📦 Dashboard Logístico</h1>
-
-  <div class="filters">
-    <input type="file" id="fileInput" accept=".csv">
-
-    <input type="date" id="startDate">
-    <input type="date" id="endDate">
-
-    <select id="cityFilter">
-      <option value="">Todas cidades</option>
-    </select>
-
-    <select id="stationFilter">
-      <option value="">Todas estações</option>
-    </select>
-
-    <select id="stationNameFilter">
-  <option value="">Todos os Station Names</option>
-</select>
-
-    <button onclick="applyFilters()">Filtrar</button>
-    <button onclick="clearFilters()">Limpar</button>
+<header class="header">
+  <div class="container">
+    <h1>📦 Dashboard Logístico</h1>
   </div>
 </header>
 
-<section class="cards">
-  <div class="card">
-    <h3>Total Pedidos</h3>
-    <p id="totalPedidos">0</p>
+<!-- 🔥 FILTROS PROFISSIONAIS -->
+<div class="filters">
+
+  <div class="filter-group">
+    <label>Importar CSV</label>
+    <input type="file" id="fileInput" accept=".csv">
   </div>
 
-  <div class="card">
-    <h3>Dentro do SLA</h3>
-    <p id="sla">0%</p>
+  <div class="filter-group">
+    <label>Cidade</label>
+    <select id="cityFilter">
+      <option value="">Todas cidades</option>
+    </select>
   </div>
 
-  <div class="card">
-    <h3>Valor</h3>
-    <p id="hold">0</p>
+  <div class="filter-group">
+    <label>Estação</label>
+    <select id="stationFilter">
+      <option value="">Todas estações</option>
+    </select>
   </div>
-</section>
 
-<section class="charts">
-  <canvas id="pedidosChart"></canvas>
-  <canvas id="cidadesChart"></canvas>
-</section>
+  <div class="filter-group">
+    <label>Station Name</label>
+    <select id="stationNameFilter">
+      <option value="">Todos os Station Names</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>&nbsp;</label>
+    <button onclick="applyFilters()">Filtrar</button>
+  </div>
+
+  <div class="filter-group">
+    <label>&nbsp;</label>
+    <button onclick="clearFilters()">Limpar</button>
+  </div>
+
+</div>
+
+<div class="container">
+
+  <section class="cards">
+    <div class="card">
+      <h3>Total Pedidos</h3>
+      <p id="totalPedidos">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Dentro do SLA</h3>
+      <p id="slaDentro">0%</p>
+    </div>
+
+    <div class="card">
+      <h3>Fora do SLA</h3>
+      <p id="slaFora">0%</p>
+    </div>
+
+    <div class="card">
+      <h3>📦 Pacotes OnHold</h3>
+      <p id="hold">0</p>
+    </div>
+  </section>
+
+  <section class="charts">
+
+    <div class="chart-box">
+      <canvas id="cidadesChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <canvas id="slaChart"></canvas>
+    </div>
+
+  </section>
+
+</div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
