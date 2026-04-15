@@ -4,7 +4,16 @@ let filteredData = [];
 let pedidosChart, cidadesChart;
 
 // ============================
-// UPLOAD DO CSV
+// FUNÇÃO PRA DINHEIRO
+// ============================
+function parseMoney(value) {
+  if (!value) return 0;
+  value = value.toString().replace(/\./g, "").replace(",", ".");
+  return parseFloat(value) || 0;
+}
+
+// ============================
+// UPLOAD
 // ============================
 document.getElementById("fileInput").addEventListener("change", function(e) {
   const file = e.target.files[0];
@@ -20,13 +29,12 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
       resetFilters();
       populateCityFilter(data);
       populateStationFilter();
+      populateStationNameFilter();
       updateDashboard();
     }
   });
 });
 
-// ============================
-// RESET
 // ============================
 function resetFilters() {
   document.getElementById("cityFilter").innerHTML =
@@ -35,12 +43,13 @@ function resetFilters() {
   document.getElementById("stationFilter").innerHTML =
     '<option value="">Todas estações</option>';
 
+  document.getElementById("stationNameFilter").innerHTML =
+    '<option value="">Todos os Station Names</option>';
+
   document.getElementById("startDate").value = "";
   document.getElementById("endDate").value = "";
 }
 
-// ============================
-// LIMPAR
 // ============================
 function clearFilters() {
   filteredData = data;
@@ -48,18 +57,18 @@ function clearFilters() {
   resetFilters();
   populateCityFilter(data);
   populateStationFilter();
+  populateStationNameFilter();
 
   updateDashboard();
 }
 
 // ============================
-// CIDADES DINÂMICO
+// CIDADES
 // ============================
 function populateCityFilter(filtered = data) {
   const cities = [...new Set(filtered.map(d => d.buyer_address_city_name))];
 
   const select = document.getElementById("cityFilter");
-
   select.innerHTML = '<option value="">Todas cidades</option>';
 
   cities.forEach(city => {
@@ -73,7 +82,7 @@ function populateCityFilter(filtered = data) {
 }
 
 // ============================
-// ESTAÇÕES
+// ESTAÇÕES (lm_station_name)
 // ============================
 function populateStationFilter() {
   const stations = [...new Set(data.map(d => d.lm_station_name))];
@@ -91,27 +100,49 @@ function populateStationFilter() {
 }
 
 // ============================
-// FILTRO DEPENDENTE
+// NOVO: STATION NAME (coluna F)
+// ============================
+function populateStationNameFilter(filtered = data) {
+  const stationNames = [...new Set(filtered.map(d => d.station_name))];
+
+  const select = document.getElementById("stationNameFilter");
+  select.innerHTML = '<option value="">Todos os Station Names</option>';
+
+  stationNames.forEach(name => {
+    if (name) {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    }
+  });
+}
+
+// ============================
+// FILTRO INTELIGENTE (ESTAÇÃO -> CIDADE + STATION NAME)
 // ============================
 document.getElementById("stationFilter").addEventListener("change", function() {
   const station = this.value;
 
   if (!station) {
     populateCityFilter(data);
+    populateStationNameFilter(data);
     return;
   }
 
   const filtered = data.filter(d => d.lm_station_name === station);
 
   populateCityFilter(filtered);
+  populateStationNameFilter(filtered);
 });
 
 // ============================
-// APLICAR FILTROS
+// FILTROS
 // ============================
 function applyFilters() {
   const city = document.getElementById("cityFilter").value;
   const station = document.getElementById("stationFilter").value;
+  const stationName = document.getElementById("stationNameFilter").value;
   const startDate = document.getElementById("startDate").value;
   const endDate = document.getElementById("endDate").value;
 
@@ -120,6 +151,7 @@ function applyFilters() {
 
     if (city && d.buyer_address_city_name !== city) valid = false;
     if (station && d.lm_station_name !== station) valid = false;
+    if (stationName && d.station_name !== stationName) valid = false;
 
     if (startDate && new Date(d.created_at) < new Date(startDate)) valid = false;
     if (endDate && new Date(d.created_at) > new Date(endDate)) valid = false;
@@ -131,7 +163,7 @@ function applyFilters() {
 }
 
 // ============================
-// ATUALIZAR DASHBOARD
+// DASHBOARD
 // ============================
 function updateDashboard() {
   updateCards();
@@ -139,21 +171,18 @@ function updateDashboard() {
 }
 
 // ============================
-// CARDS (CORRIGIDO)
+// CARDS
 // ============================
 function updateCards() {
   const total = filteredData.length;
 
-  // SLA INTELIGENTE
   const sla = filteredData.filter(d => {
-    const val = String(d.in_sla_performance).toLowerCase();
-    return val === "1" || val === "true" || val === "yes";
+    const val = String(d.in_sla_performance).toLowerCase().trim();
+    return val !== "" && val !== "0" && val !== "false" && val !== "no";
   }).length;
 
-  // SOMA EM R$
   const holdValue = filteredData.reduce((sum, d) => {
-    const value = parseFloat(d["cogs(SUM)"]) || 0;
-    return sum + value;
+    return sum + parseMoney(d["cogs(SUM)"]);
   }, 0);
 
   document.getElementById("totalPedidos").innerText = total;
