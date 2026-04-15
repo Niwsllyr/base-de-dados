@@ -42,7 +42,7 @@ body {
 }
 
 .logo-area h1 {
-  font-size: 18px;
+  font-size: 50px;
 }
 
 .logo-area span {
@@ -214,4 +214,144 @@ button:last-of-type {
 
 .title-area h1 {
   font-size: 20px;
+}
+
+.text-area span {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+/* HEADER GERAL */
+.header {
+  background: #ee4d2d;
+  padding: 16px 0;
+  color: #fff;
+}
+
+/* LAYOUT */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ESQUERDA */
+.left-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.left-area img {
+  width: 50px;
+  height: 50px;
+}
+
+.text-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.text-area h1 {
+  font-size: 25px;
+  line-height: 1.2;
+}
+
+.text-area span {
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+/* DIREITA */
+.right-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 13px;
+}
+
+/* STATUS */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #22c55e;
+}
+
+/* DATA */
+.date {
+  opacity: 0.9;
+}
+
+/* USUÁRIO */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  color: #ee4d2d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.top-cities {
+  background: #fff;
+  border-radius: 14px;
+  padding: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.top-cities h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.top-cities ul {
+  list-style: none;
+}
+
+.top-cities li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+
+.trend {
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.trend.up {
+  color: #22c55e;
+}
+
+.trend.down {
+  color: #ef4444;
+}
+
+
+.card, .chart-box, .filters, .top-cities {
+  transition: 0.25s;
+}
+
+.card:hover, .chart-box:hover {
+  transform: translateY(-4px);
 }

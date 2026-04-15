@@ -81,6 +81,7 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
+    worker: true,
     complete: function(results) {
       data = results.data;
       filteredData = data;
@@ -90,6 +91,7 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
       populateStationNameFilter();
 
       initChoices();
+      loadFilters();
       updateDashboard();
 
       hideLoading();
@@ -106,6 +108,7 @@ function clearFilters() {
   populateStationNameFilter();
 
   initChoices();
+  loadFilters();
   updateDashboard();
 }
 
@@ -164,6 +167,7 @@ function applyFilters() {
   });
 
   updateDashboard();
+  saveFilters();
 }
 
 // ============================
@@ -171,6 +175,7 @@ function updateDashboard() {
   updateCards();
   renderCidadesChart();
   renderSLAChart();
+  renderTopCities();
 }
 
 // ============================
@@ -214,8 +219,21 @@ function renderCidadesChart() {
         borderRadius: 6
       }]
     },
-    options: getChartOptions("Cidade")
+    options: {
+  ...getChartOptions("Cidade"),
+
+  onClick: (e, elements) => {
+    if (elements.length > 0) {
+      const index = elements[0].index;
+      const city = Object.keys(porCidade)[index];
+
+      document.getElementById("cityFilter").value = city;
+      applyFilters();
+    }
+  }
+}
   });
+  
 }
 
 // ============================
@@ -321,4 +339,80 @@ function getChartOptions(labelName) {
       intersect: false
     }
   };
+}
+
+function updateDate() {
+  const now = new Date();
+
+  const formatted = now.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+
+  document.getElementById("currentDate").innerText = formatted;
+}
+
+updateDate();
+
+function startClock() {
+  setInterval(() => {
+    const now = new Date();
+
+    const time = now.toLocaleTimeString('pt-BR');
+    const date = now.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short'
+    });
+
+    document.getElementById("currentDate").innerText = `${date} • ${time}`;
+  }, 1000);
+}
+
+startClock();
+
+
+function renderTopCities() {
+  const porCidade = {};
+
+  filteredData.forEach(d => {
+    const city = d.buyer_address_city_name;
+    if (!city) return;
+    porCidade[city] = (porCidade[city] || 0) + 1;
+  });
+
+  const sorted = Object.entries(porCidade)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const ul = document.getElementById("topCitiesList");
+  ul.innerHTML = "";
+
+  sorted.forEach(([city, count], i) => {
+    ul.innerHTML += `
+      <li>
+        <span>${i + 1}. ${city}</span>
+        <strong>${count}</strong>
+      </li>
+    `;
+  });
+}
+
+function saveFilters() {
+  const filters = {
+    city: document.getElementById("cityFilter").value,
+    station: document.getElementById("stationFilter").value,
+    stationName: document.getElementById("stationNameFilter").value
+  };
+
+  localStorage.setItem("filters", JSON.stringify(filters));
+}
+
+function loadFilters() {
+  const saved = JSON.parse(localStorage.getItem("filters"));
+  if (!saved) return;
+
+  document.getElementById("cityFilter").value = saved.city;
+  document.getElementById("stationFilter").value = saved.station;
+  document.getElementById("stationNameFilter").value = saved.stationName;
 }

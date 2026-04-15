@@ -29,18 +29,33 @@
 <header class="header">
   <div class="container header-content">
 
-    <div class="logo-area">
-      <img src="logo.png" alt="Logo">
-      <div>
-        <div class="title-area">
-  <img src="logo1.png" alt="Shopee Logo">
-  <h1>Dashboard Logístico |</h1>
-        <span>Operações Shopee |</span>
+    <!-- ESQUERDA -->
+    <div class="left-area">
+      <img src="logo1.png" alt="Shopee Logo">
+
+      <div class="text-area">
+        <h1>Dashboard Logístico</h1>
+        <span>Operações Shopee</span>
       </div>
     </div>
 
-    <div class="user-area">
-      📊 Analytics
+    <!-- DIREITA -->
+    <div class="right-area">
+
+      <div class="status">
+        <span class="dot"></span>
+        Sistema Online
+      </div>
+
+      <div class="date" id="currentDate">
+        --
+      </div>
+
+      <div class="user">
+        <div class="avatar">T</div>
+        <span>Thais Silva</span>
+      </div>
+
     </div>
 
   </div>
@@ -119,7 +134,17 @@
     <div class="chart-box">
       <canvas id="slaChart"></canvas>
     </div>
+
+    <div class="top-cities">
+  <h3>🏆 Top 5 Cidades</h3>
+  <ul id="topCitiesList"></ul>
+</div>
+
+
+
   </section>
+
+
 
 </div>
 
