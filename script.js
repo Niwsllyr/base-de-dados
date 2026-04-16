@@ -416,3 +416,50 @@ function loadFilters() {
   document.getElementById("stationFilter").value = saved.station;
   document.getElementById("stationNameFilter").value = saved.stationName;
 }
+
+
+function copyBRs() {
+
+  // 🔥 pega dados filtrados ou todos
+  const source = filteredData.length ? filteredData : data;
+
+  // 🔥 extrai shipment_id (coluna M)
+  const brs = source
+    .map(d => d.shipment_id)
+    .filter(id => id && id !== ""); // remove vazios
+
+  if (brs.length === 0) {
+    showToast("❌ Nenhuma BR encontrada");
+    return;
+  }
+
+  // 🔥 copia tudo separado por quebra de linha
+  const text = brs.join("\n");
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      showToast(`✅ ${brs.length} BR(s) copiadas com sucesso!`);
+    })
+    .catch(() => {
+      showToast("❌ Erro ao copiar");
+    });
+}
+
+
+function showToast(message) {
+  let toast = document.createElement("div");
+
+  toast.innerText = message;
+  toast.className = "toast";
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 100);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
