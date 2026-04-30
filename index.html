@@ -1,159 +1,177 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard Shopee</title>
+<meta charset="UTF-8"/>
+<title>Dashboard XPT</title>
 
-  <link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" href="image1.png">
 
-  <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="styles.css" as="style" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="styles.css"></noscript>
 
-  <!-- PapaParse -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
-  <!-- Choices -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script type="module" src="dashboard.js" defer></script>
 </head>
 
 <body>
 
-<!-- LOADING -->
-<div id="loading" class="loading hidden">
-  Carregando dados...
-</div>
+<div class="dashboard" id="dashboard">
 
-<header class="header">
-  <div class="container header-content">
-
-    <!-- ESQUERDA -->
-    <div class="left-area">
-      <img src="logo1.png" alt="Shopee Logo">
-
-      <div class="text-area">
-        <h1>Dashboard Logístico</h1>
-        <span>Operações Shopee</span>
-      </div>
-    </div>
-
-    <!-- DIREITA -->
-    <div class="right-area">
-
-      <div class="status">
-        <span class="dot"></span>
-        Sistema Online
+  <header class="topbar">
+      <div class="brand">
+          <img src="image.png" class="logo">
+          <div class="title-group">
+              <h1>Dashboard Operacional</h1>
+              <span>Performance Logística | SLA & DS</span>
+          </div>
       </div>
 
-      <div class="date" id="currentDate">
-        --
+      <div class="actions">
+          <button id="btnGeneral" class="nav active">Geral</button>
+          <button id="btnSLA" class="nav">SLA</button>
+          <button id="btnDS" class="nav">DS</button>
+          <button id="btnCity" class="nav">Entregadores</button>
+          <button class="print" onclick="printAndCopy()">📸 Exportar</button>
+      </div>
+  </header>
+
+  <section class="control-bar">
+      <div class="uploads">
+          <div>
+              <label>SLA</label>
+              <input type="file" id="csvInput" accept=".csv">
+          </div>
+          <div>
+              <label>DS</label>
+              <input type="file" id="dsInput" accept=".csv">
+          </div>
       </div>
 
-      <div class="user">
-        <div class="avatar">T</div>
-        <span>Thais Silva</span>
+      <div class="filters">
+          <select id="driverSelect">
+              <option value="">Todos os Entregadores</option>
+          </select>
+
+          <select id="citySelect">
+              <option value="">Todas as Cidades</option>
+          </select>
+
+          <select id="statusSelect">
+              <option value="">Todos Status</option>
+          </select>
       </div>
-
-    </div>
-
-  </div>
-</header>
-
-<!-- FILTROS -->
-<div class="filters">
-
-  <div class="filter-group">
-    <label>Importar CSV</label>
-    <input type="file" id="fileInput" accept=".csv">
-  </div>
-
-  <div class="filter-group">
-    <label>Cidade</label>
-    <select id="cityFilter">
-      <option value="">Todas cidades</option>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label>Estação</label>
-    <select id="stationFilter">
-      <option value="">Todas estações</option>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label>Station Name</label>
-    <select id="stationNameFilter">
-      <option value="">Todos</option>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label>&nbsp;</label>
-    <button onclick="applyFilters()">Filtrar</button>
-  </div>
-
-  <div class="filter-group">
-    <label>&nbsp;</label>
-    <button onclick="clearFilters()">Limpar</button>
-  </div>
-
-  <div class="filter-group">
-  <label>&nbsp;</label>
-  <button onclick="copyBRs()" style="background:#22c55e;">📋 Copiar BRs</button>
-</div>
-
-</div>
-
-<div class="container">
-
-  <section class="cards">
-    <div class="card">
-      <h3>Total Pedidos</h3>
-      <p id="totalPedidos">0</p>
-    </div>
-
-    <div class="card">
-      <h3>Dentro do SLA</h3>
-      <p id="slaDentro">0%</p>
-    </div>
-
-    <div class="card">
-      <h3>Fora do SLA</h3>
-      <p id="slaFora">0%</p>
-    </div>
-
-    <div class="card">
-      <h3>📦 Pacotes OnHold</h3>
-      <p id="hold">0</p>
-    </div>
   </section>
 
-  <section class="charts">
-    <div class="chart-box">
-      <canvas id="cidadesChart"></canvas>
-    </div>
+  <section id="homePage" class="main-grid">
 
-    <div class="chart-box">
-      <canvas id="slaChart"></canvas>
-    </div>
+      <div class="kpi-grid">
 
-    <div class="top-cities">
-  <h3>🏆 Top 5 Cidades</h3>
-  <ul id="topCitiesList"></ul>
-</div>
+          <div class="kpi">
+              <span>Total</span>
+              <strong id="kpiTotal">0</strong>
+          </div>
 
+          <div class="kpi">
+              <span>Entregues</span>
+              <strong id="kpiDelivered">0</strong>
+          </div>
 
+          <div class="kpi">
+              <span>Pendentes</span>
+              <strong id="kpiPending">0</strong>
+          </div>
+
+          <div class="kpi" id="kpiSlaCard">
+              <span>SLA</span>
+              <strong id="kpiSla">0%</strong>
+          </div>
+
+          <div class="kpi" id="cardMeta">
+              <span>Meta 98%</span>
+              <strong id="kpiForecast">0</strong>
+          </div>
+
+          <div class="kpi" id="kpiDsCard">
+              <span>DS</span>
+              <strong id="kpiDs">0%</strong>
+          </div>
+
+          <div class="kpi" id="cardDiff">
+              <span>SLA vs DS</span>
+              <strong id="kpiDiff">0%</strong>
+          </div>
+
+          <div class="kpi">
+              <span>Alerta</span>
+              <p id="kpiAlert">-</p>
+          </div>
+
+          <div class="kpi" id="cardScore">
+              <span>Score Operação</span>
+              <strong id="kpiScore">0</strong>
+          </div>
+
+      </div>
+
+      <div class="chart-grid">
+          <div class="card">
+              <canvas id="barChart"></canvas>
+          </div>
+          <div class="card">
+              <canvas id="pieChart"></canvas>
+          </div>
+      </div>
 
   </section>
 
-
+  <section id="cityPage" class="table-page" style="display:none;">
+      <div class="card table-card">
+          <table>
+              <thead>
+                  <tr>
+                      <th>Entregador</th>
+                      <th>Total</th>
+                      <th>Entregues</th>
+                      <th>Pendentes</th>
+                      <th>SLA</th>
+                  </tr>
+              </thead>
+              <tbody id="cityTableBody"></tbody>
+          </table>
+      </div>
+  </section>
 
 </div>
 
-<script src="script.js"></script>
+<script>
+function printAndCopy() {
+    const area = document.getElementById("dashboard");
+
+     document.body.classList.add("export-mode");
+
+    // 🔥 força atualização visual
+    area.style.transform = "scale(1)";
+    
+    setTimeout(() => {
+        html2canvas(area, {
+            backgroundColor: "#000000",
+            scale: 2,
+            useCORS: true
+        }).then(canvas => {
+            const link = document.createElement("a");
+            link.download = "dashboard-xpt.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+
+            document.body.classList.remove("export-mode");
+        });
+    }, 300);
+}
+</script>
 
 </body>
 </html>
